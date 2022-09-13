@@ -475,14 +475,90 @@ Hence the number of channels multiplies fivefold.</p>
 <p>The space of equivariant maps from a second order Ptensor to a zeroth order Ptensor is spanned by
 <img alt="B^1_{c}=\sum_i \sum_j A_{i,j,c}" class="math" src="_images/math/f414f73e45a0511032fa3822141cf75994c6c1b1.svg"/> and
 <img alt="B^2_{c}=\sum_i A_{i,i,c}" class="math" src="_images/math/e791a9e997db376419b89e760eea5e8142f90aaf.svg"/>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor2</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="go">Ptensor2(1,2,3):</span>
+<span class="go">channel 0:</span>
+<span class="go">  [ 0 3 6 ]</span>
+<span class="go">  [ 9 12 15 ]</span>
+<span class="go">  [ 18 21 24 ]</span>
+
+<span class="go">channel 1:</span>
+<span class="go">  [ 1 4 7 ]</span>
+<span class="go">  [ 10 13 16 ]</span>
+<span class="go">  [ 19 22 25 ]</span>
+
+<span class="go">channel 2:</span>
+<span class="go">  [ 2 5 8 ]</span>
+<span class="go">  [ 11 14 17 ]</span>
+<span class="go">  [ 20 23 26 ]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">linmaps0</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="go">Ptensor0(1,2,3):</span>
+<span class="go">[ 108 117 126 36 39 42 ]</span>
+</pre></div>
+</div>
 <p>The space of equivariant maps from a second order Ptensor to a first order Ptensor is spanned by
 <img alt="B^1_{i',c}=\sum_i \sum_j A_{i,j,c}" class="math" src="_images/math/f8f0e2fb630243e9b56a514cf2b128ec4e7d4d91.svg"/>,
 <img alt="B^2_{i',c}=\sum_i A_{i,i,c}" class="math" src="_images/math/1428895c698e636039c27af1268110701a87c298.svg"/>,
 <img alt="B^3_{i,c}=\sum_j A_{i,j,c}" class="math" src="_images/math/d525252d327b1d443fd4f56c8ebd0b015de85708.svg"/>,
 <img alt="B^4_{i,c}=\sum_j A_{j,i,c}" class="math" src="_images/math/f9f03734b5ac9d63f901737327358fa69c1aea4e.svg"/>, and
 <img alt="B^5_{i,c}=\sum_j A_{i,i,c}" class="math" src="_images/math/4154a3dfdeb055122ce0f4cddf16e126a85029ac.svg"/>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">linmaps1</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="go">Ptensor1(1,2,3):</span>
+<span class="go">[ 108 117 126 36 39 42 27 30 33 9 12 15 0 1 2 ]</span>
+<span class="go">[ 108 117 126 36 39 42 36 39 42 36 39 42 12 13 14 ]</span>
+<span class="go">[ 108 117 126 36 39 42 45 48 51 63 66 69 24 25 26 ]</span>
+</pre></div>
+</div>
 <p>The space of equivariant maps from a second order Ptensor to a second order Ptensor is spanned by
-15 different maps.</p>
+15 different maps (output truncated).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">linmaps2</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="go">Ptensor2(1,2,3):</span>
+<span class="go">channel 0:</span>
+<span class="go">  [ 108 108 108 ]</span>
+<span class="go">  [ 108 108 108 ]</span>
+<span class="go">  [ 108 108 108 ]</span>
+
+<span class="go">channel 1:</span>
+<span class="go">  [ 117 117 117 ]</span>
+<span class="go">  [ 117 117 117 ]</span>
+<span class="go">  [ 117 117 117 ]</span>
+
+<span class="go">channel 2:</span>
+<span class="go">  [ 126 126 126 ]</span>
+<span class="go">  [ 126 126 126 ]</span>
+<span class="go">  [ 126 126 126 ]</span>
+
+<span class="go">channel 3:</span>
+<span class="go">  [ 36 36 36 ]</span>
+<span class="go">  [ 36 36 36 ]</span>
+<span class="go">  [ 36 36 36 ]</span>
+
+<span class="go">channel 4:</span>
+<span class="go">  [ 39 39 39 ]</span>
+<span class="go">  [ 39 39 39 ]</span>
+<span class="go">  [ 39 39 39 ]</span>
+
+<span class="go">channel 5:</span>
+<span class="go">  [ 42 42 42 ]</span>
+<span class="go">  [ 42 42 42 ]</span>
+<span class="go">  [ 42 42 42 ]</span>
+
+<span class="go">channel 6:</span>
+<span class="go">  [ 108 0 0 ]</span>
+<span class="go">  [ 0 108 0 ]</span>
+<span class="go">  [ 0 0 108 ]</span>
+
+<span class="go">channel 7:</span>
+<span class="go">  [ 117 0 0 ]</span>
+<span class="go">  [ 0 117 0 ]</span>
+<span class="go">  [ 0 0 117 ]</span>
+</pre></div>
+</div>
 </section>
 </section>
 </section>
