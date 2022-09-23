@@ -194,8 +194,9 @@ One of the keys to efficient message passing is that <cite>ptens</cite> can oper
 on all the Ptensors in a given layer <em>in parallel</em>, even if their reference domains are of different sizes.</p>
 <section id="defining-ptensor-layers">
 <h2>Defining Ptensor layers<a class="headerlink" href="#defining-ptensor-layers" title="Permalink to this headline">¶</a></h2>
-<p>Similarly to individual Ptensors, one way to define Ptensor layers is using the <code class="docutils literal notranslate"><span class="pre">zero</span></code>,
-<code class="docutils literal notranslate"><span class="pre">randn</span></code> or <code class="docutils literal notranslate"><span class="pre">sequential</span></code> constructors. For example, the following creates a layer consisting of three
+<p>One way to define Ptensor layers is using the <code class="docutils literal notranslate"><span class="pre">zero</span></code>, <code class="docutils literal notranslate"><span class="pre">randn</span></code> or <code class="docutils literal notranslate"><span class="pre">sequential</span></code> constructors,
+similalry to how individual Ptensors can be constructed.
+For example, the following creates a layer consisting of three
 random first order Ptensors with reference domains <img alt="(1,2,3)" class="math" src="_images/math/efc18c906b29caf3a54303fba549fdae2480400b.svg"/>, <img alt="(3,5)" class="math" src="_images/math/4d7fecdc6f705d8cdd8d1a376b81f39a01c25960.svg"/> and <img alt="(2)" class="math" src="_images/math/62af81748a72ac25ea96af2f67d7626df9c9a3a3.svg"/>
 and 3 channels:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors1</span><span class="o">.</span><span class="n">randn</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">],[</span><span class="mi">2</span><span class="p">]],</span><span class="mi">3</span><span class="p">)</span>
@@ -213,9 +214,74 @@ and 3 channels:</p>
 <span class="go">[ 0.584898 -0.660558 0.534755 ]</span>
 </pre></div>
 </div>
-<p>Unlike individual Ptensors, however, the <code class="docutils literal notranslate"><span class="pre">ptensors0</span></code>, <code class="docutils literal notranslate"><span class="pre">ptensors1</span></code> and <code class="docutils literal notranslate"><span class="pre">tensors2</span></code> classes
-are not derived classes of <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>. Therefore the individual Ptensors in a ptensor layer
-cannot be directly accessed.</p>
+</section>
+<section id="getters-and-setters">
+<h2>Getters and setters<a class="headerlink" href="#getters-and-setters" title="Permalink to this headline">¶</a></h2>
+<p>Unlike individual Ptensors, the <code class="docutils literal notranslate"><span class="pre">ptensors0</span></code>, <code class="docutils literal notranslate"><span class="pre">ptensors1</span></code> and <code class="docutils literal notranslate"><span class="pre">tensors2</span></code> classes
+are not derived classes of <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>. For 0’th order Ptensor layers, however, it
+is possible to define the layer
+from an <img alt="N\times c" class="math" src="_images/math/2c5d8e1de7c2fd0c3cb5cdf904b218b4b674445b.svg"/> dimensional PyTorch tensor, where <img alt="c" class="math" src="_images/math/9991f30201a1b175c501032a3f9df38616881f91.svg"/> is the number of channels:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">M</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">M</span>
+<span class="go">tensor([[-1.2385, -0.4237, -1.2900, -1.4475,  0.2929],</span>
+<span class="go">        [-0.0483,  0.8409,  0.3700,  0.5826, -1.2325],</span>
+<span class="go">        [ 1.8040, -0.1950, -1.4181, -0.7805, -0.6050]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors0</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">Ptensor0 [0]:</span>
+<span class="go">[ -1.23848 -0.423698 -1.28997 -1.44752 0.292851 ]</span>
+
+<span class="go">Ptensor0 [1]:</span>
+<span class="go">[ -0.0482669 0.840887 0.370005 0.58262 -1.23249 ]</span>
+
+<span class="go">Ptensor0 [2]:</span>
+<span class="go">[ 1.80402 -0.195021 -1.41805 -0.780468 -0.604952 ]</span>
+</pre></div>
+</div>
+<p>Conversely, the <code class="docutils literal notranslate"><span class="pre">torch()</span></code> method of <code class="docutils literal notranslate"><span class="pre">ptensors0</span></code> returns the content of the layer in a single
+PyTorch tensor:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors0</span><span class="o">.</span><span class="n">sequential</span><span class="p">([[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">]],</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">torch</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">Ptensor0 [1]:</span>
+<span class="go">[ 0 0 0 0 0 ]</span>
+
+<span class="go">Ptensor0 [2]:</span>
+<span class="go">[ 1 1 1 1 1 ]</span>
+
+<span class="go">Ptensor0 [3]:</span>
+<span class="go">[ 2 2 2 2 2 ]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span>
+<span class="go">tensor([[0., 0., 0., 0., 0.],</span>
+<span class="go">        [1., 1., 1., 1., 1.],</span>
+<span class="go">        [2., 2., 2., 2., 2.]])</span>
+</pre></div>
+</div>
+<p>For higher order tensor layers, the individual tensors have to be accessed one by one if they are to
+be converted to a Pytorch tensor, for example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors1</span><span class="o">.</span><span class="n">randn</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">]],</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">Ptensor1 [1,2]:</span>
+<span class="go">[ -1.23974 -0.407472 1.61201 0.399771 1.3828 ]</span>
+<span class="go">[ 0.0523187 -0.904146 1.87065 -1.66043 -0.688081 ]</span>
+
+<span class="go">Ptensor1 [2,3]:</span>
+<span class="go">[ 0.0757219 1.47339 0.097221 -0.89237 -0.228782 ]</span>
+<span class="go">[ 1.16493 0.584898 -0.660558 0.534755 -0.607787 ]</span>
+
+<span class="go">Ptensor1 [3]:</span>
+<span class="go">[ 0.74589 -1.75177 -0.965146 -0.474282 -0.546571 ]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span>
+<span class="go">Ptensor1 [2,3]:</span>
+<span class="go">[ 0.0757219 1.47339 0.097221 -0.89237 -0.228782 ]</span>
+<span class="go">[ 1.16493 0.584898 -0.660558 0.534755 -0.607787 ]</span>
+</pre></div>
+</div>
+<p>Note that accessing individual tensors, as well as the constructor and <code class="docutils literal notranslate"><span class="pre">torch()</span></code> methods for <code class="docutils literal notranslate"><span class="pre">ptensors0</span></code>
+described above are differentiable operations.</p>
 </section>
 </section>
 
@@ -274,6 +340,7 @@ cannot be directly accessed.</p>
             <ul>
 <li><a class="reference internal" href="#">Ptensor layers</a><ul>
 <li><a class="reference internal" href="#defining-ptensor-layers">Defining Ptensor layers</a></li>
+<li><a class="reference internal" href="#getters-and-setters">Getters and setters</a></li>
 </ul>
 </li>
 </ul>
