@@ -11,6 +11,9 @@ Welcome to ptens's documentation!
    :caption: Contents:
 
    ptensork.rst
+   ptensorsk.rst
+   linmaps.rst
+   transfer.rst
 
 
 Indices and tables
