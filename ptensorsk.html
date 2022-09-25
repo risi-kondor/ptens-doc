@@ -283,6 +283,88 @@ be converted to a Pytorch tensor, for example:</p>
 <p>Note that accessing individual tensors, as well as the constructor and <code class="docutils literal notranslate"><span class="pre">torch()</span></code> methods for <code class="docutils literal notranslate"><span class="pre">ptensors0</span></code>
 described above are differentiable operations.</p>
 </section>
+<section id="operations-on-ptensor-layers">
+<h2>Operations on Ptensor layers<a class="headerlink" href="#operations-on-ptensor-layers" title="Permalink to this headline">¶</a></h2>
+<p>Because the Ptensor layers are not subclasses of  <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, they do not automatically inherit all the
+usual arithmetic operations like addition multiplication by scalars, etc..
+Currently, three basic operations are implemented for these classes: addition, concatenation and
+multiplication by matrices. All three of these operations are differentiable.</p>
+<section id="addition-and-concatenation">
+<h3>Addition and concatenation<a class="headerlink" href="#addition-and-concatenation" title="Permalink to this headline">¶</a></h3>
+<p>Two matching Ptensor layers (i.e., two layers such that the i’th tensor in the first layer has the
+same order, same number of channels and same reference domain as the i’th tensor in the second layer)
+can be added together:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors1</span><span class="o">.</span><span class="n">randn</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">]],</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors1</span><span class="o">.</span><span class="n">randn</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">]],</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">A</span><span class="o">+</span><span class="n">B</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span>
+<span class="go">Ptensor1 [1,2]:</span>
+<span class="go">[ 1.44739 0.556559 -1.06723 ]</span>
+<span class="go">[ -0.586973 2.43145 1.42343 ]</span>
+
+<span class="go">Ptensor1 [2,3]:</span>
+<span class="go">[ -3.47165 0.924936 -1.3852 ]</span>
+<span class="go">[ -0.556994 -1.03874 0.25647 ]</span>
+
+<span class="go">Ptensor1 [3]:</span>
+<span class="go">[ -1.96103 -0.993459 1.36575 ]</span>
+</pre></div>
+</div>
+<p>Two matching Ptensor layers can also be concatenated along their channel dimension:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors1</span><span class="o">.</span><span class="n">randn</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">]],</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors1</span><span class="o">.</span><span class="n">randn</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">]],</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span>
+<span class="go">Ptensor1 [1,2]:</span>
+<span class="go">[ 0.584898 -0.660558 0.534755 -1.23974 -0.407472 1.61201 ]</span>
+<span class="go">[ -0.607787 0.74589 -1.75177 0.399771 1.3828 0.0523187 ]</span>
+
+<span class="go">Ptensor1 [2,3]:</span>
+<span class="go">[ -0.965146 -0.474282 -0.546571 -0.904146 1.87065 -1.66043 ]</span>
+<span class="go">[ -0.0384917 0.194947 -0.485144 -0.688081 0.0757219 1.47339 ]</span>
+
+<span class="go">Ptensor1 [3]:</span>
+<span class="go">[ -0.370271 -1.12408 1.73664 0.097221 -0.89237 -0.228782 ]</span>
+</pre></div>
+</div>
+</section>
+<section id="multiplication-by-matrices">
+<h3>Multiplication by matrices<a class="headerlink" href="#multiplication-by-matrices" title="Permalink to this headline">¶</a></h3>
+<p>Multiplying Ptensors by matrices along their channel dimension is an equivariant operation.
+The primary way that learnable
+parameters are introduced in permutation equivariant nets is in the form of such mixing matrices.
+The following example demostrates this for a <code class="docutils literal notranslate"><span class="pre">ptensors1</span></code> object, but the same works for
+<code class="docutils literal notranslate"><span class="pre">ptensors0</span></code> and <code class="docutils literal notranslate"><span class="pre">ptensors2</span></code> layers as well.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors1</span><span class="o">.</span><span class="n">randn</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">]],</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">Ptensor1 [1,2]:</span>
+<span class="go">[ -0.274068 0.005616 -1.77286 0.519691 0.0431933 ]</span>
+<span class="go">[ -1.96668 -0.480737 -1.83641 -0.257851 -0.391737 ]</span>
+
+<span class="go">Ptensor1 [2,3]:</span>
+<span class="go">[ 2.69588 1.6585 -1.13769 -1.22027 0.111152 ]</span>
+<span class="go">[ -0.672931 -1.39814 -0.477463 0.643125 1.37519 ]</span>
+
+<span class="go">Ptensor1 [3]:</span>
+<span class="go">[ -1.2589 0.259477 -1.6247 -0.996947 -0.149277 ]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">M</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">A</span><span class="o">*</span><span class="n">M</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span>
+<span class="go">Ptensor1 [1,2]:</span>
+<span class="go">[ -0.164324 -2.41585 ]</span>
+<span class="go">[ -3.48671 -0.161725 ]</span>
+
+<span class="go">Ptensor1 [2,3]:</span>
+<span class="go">[ 2.90595 -7.82352 ]</span>
+<span class="go">[ 0.69117 3.77597 ]</span>
+
+<span class="go">Ptensor1 [3]:</span>
+<span class="go">[ -2.84689 -1.14514 ]</span>
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 
         </article>
@@ -341,6 +423,11 @@ described above are differentiable operations.</p>
 <li><a class="reference internal" href="#">Ptensor layers</a><ul>
 <li><a class="reference internal" href="#defining-ptensor-layers">Defining Ptensor layers</a></li>
 <li><a class="reference internal" href="#getters-and-setters">Getters and setters</a></li>
+<li><a class="reference internal" href="#operations-on-ptensor-layers">Operations on Ptensor layers</a><ul>
+<li><a class="reference internal" href="#addition-and-concatenation">Addition and concatenation</a></li>
+<li><a class="reference internal" href="#multiplication-by-matrices">Multiplication by matrices</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
