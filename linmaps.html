@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Transfer maps" href="transfer.html" /><link rel="prev" title="Ptensor layers" href="ptensorsk.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Transfer maps" href="transfer.html" /><link rel="prev" title="Graphs" href="graph.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
         <title>Linmaps - ptens documentation</title>
@@ -158,6 +158,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="ptensork.html">Ptensors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ptensorsk.html">Ptensor layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Graphs</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Linmaps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer maps</a></li>
 </ul>
@@ -189,14 +190,16 @@
           <section id="linmaps">
 <h1>Linmaps<a class="headerlink" href="#linmaps" title="Permalink to this headline">¶</a></h1>
 <p>The neurons in permutation equivariant networks implement learnable equivariant maps between Ptensors.
-The <code class="docutils literal notranslate"><span class="pre">linmaps</span></code> functions described in this section are such equivariant maps that can be
-applied when the reference domains of the input and output tensors are the <em>same</em>.</p>
+The <code class="docutils literal notranslate"><span class="pre">linmaps</span></code> functions described in this section are equivariant linear maps between two Ptensors
+with the <em>same</em> reference domain.</p>
+<section id="linmaps-between-ptensors">
+<h2>Linmaps between Ptensors<a class="headerlink" href="#linmaps-between-ptensors" title="Permalink to this headline">¶</a></h2>
 <section id="linmaps0">
-<h2>linmaps0<a class="headerlink" href="#linmaps0" title="Permalink to this headline">¶</a></h2>
+<h3>linmaps0<a class="headerlink" href="#linmaps0" title="Permalink to this headline">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">linmaps0</span></code> maps a 0’th, 1’st or 2’nd order Ptensor to a 0’th order Ptensor.</p>
 <p>The only possible equivariant linear maps from one 0’th order Ptensor to another 0’th order
 ptensor are multiples of the identity,
-Therefore <code class="docutils literal notranslate"><span class="pre">linmaps0</span></code> applied to a <code class="docutils literal notranslate"><span class="pre">ptensor0</span></code>, is just the identity map:</p>
+Therefore <code class="docutils literal notranslate"><span class="pre">linmaps0</span></code> applied to a <code class="docutils literal notranslate"><span class="pre">ptensor0</span></code>, is just the identity mapping:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor0</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">Ptensor0(1,2,3):</span>
@@ -207,7 +210,7 @@ Therefore <code class="docutils literal notranslate"><span class="pre">linmaps0<
 <span class="go">[ 0 1 2 3 4 ]</span>
 </pre></div>
 </div>
-<p>Similarly, there is only on way to map a 1’st order Ptensor to 0’th order ptensor, and that
+<p>There is only on way (up to scaling) to map a 1’st order Ptensor to 0’th order ptensor, and that
 is to sum the input along the atom dimension, i.e., <img alt="B_c=\sum_i A_{i,c}" class="math" src="_images/math/ae23f67c8cda269231c06e5329ffab4f62e388b9.svg"/>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor1</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
@@ -221,9 +224,9 @@ is to sum the input along the atom dimension, i.e., <img alt="B_c=\sum_i A_{i,c}
 <span class="go">[ 9 12 15 ]</span>
 </pre></div>
 </div>
-<p>In contrast, there are two distinct ways to map a 2’nd order Ptensor to a 0’th order Ptensor:
+<p>In contrast, there are two linearly independent ways to map a 2’nd order Ptensor to a 0’th order Ptensor:
 <img alt="B^1_{c}=\sum_i \sum_j A_{i,j,c}" class="math" src="_images/math/f414f73e45a0511032fa3822141cf75994c6c1b1.svg"/> and <img alt="B^2_{c}=\sum_i A_{i,i,c}" class="math" src="_images/math/e791a9e997db376419b89e760eea5e8142f90aaf.svg"/>.
-Therefore, when applied to a <code class="docutils literal notranslate"><span class="pre">ptensor2</span></code>, <a href="#id1"><span class="problematic" id="id2">``</span></a>linmaps0` doubles its number of channels:</p>
+Consequently, when applied to a <code class="docutils literal notranslate"><span class="pre">ptensor2</span></code>, <code class="docutils literal notranslate"><span class="pre">linmaps0</span></code> doubles its number of channels:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor2</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">Ptensor2(1,2,3):</span>
@@ -250,7 +253,7 @@ Therefore, when applied to a <code class="docutils literal notranslate"><span cl
 </div>
 </section>
 <section id="linmaps1">
-<h2>linmaps1<a class="headerlink" href="#linmaps1" title="Permalink to this headline">¶</a></h2>
+<h3>linmaps1<a class="headerlink" href="#linmaps1" title="Permalink to this headline">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">linmaps0</span></code> maps a 0’th, 1’st or 2’nd order Ptensor to a 0’th order Ptensor.</p>
 <p>The only equivariant map from a <code class="docutils literal notranslate"><span class="pre">ptensor0</span></code> to <code class="docutils literal notranslate"><span class="pre">ptensor1</span></code> is <img alt="B_{i,c}=A_c" class="math" src="_images/math/7307fdbc8047e34c508e47296b3daae289f98e6f.svg"/>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor0</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
@@ -317,10 +320,10 @@ Therefore , this map multiplies the number of channels five-fold.</p>
 </div>
 </section>
 <section id="linmaps2">
-<h2>linmaps2<a class="headerlink" href="#linmaps2" title="Permalink to this headline">¶</a></h2>
+<h3>linmaps2<a class="headerlink" href="#linmaps2" title="Permalink to this headline">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">linmaps2</span></code> maps a 0’th, 1’st or 2’nd order Ptensor to a 2’nd  order Ptensor.</p>
-<p>In the <img alt="\mathcal{P}_0\to\mathcal{P}_21 case there are two maps to consider:
-:math:" class="math" src="_images/math/e2f26311301c98f175369630c18d0df995ca768b.svg"/> and <img alt="C^2_{i,j,c}=\delta_{i,j} A_c" class="math" src="_images/math/11a49fe5f012bf2a1824359b5c5a579cd6f0ddeb.svg"/>:</p>
+<p>In the <img alt="\mathcal{P}_0\to\mathcal{P}_2" class="math" src="_images/math/deeef9bfdbc0c8479b95dd74208060c2c6252a07.svg"/> case there are two maps to consider:
+<img alt="C^1_{i,j,c}=A_c" class="math" src="_images/math/8f923301dddd099a880c38c2dd903514bc3edb18.svg"/> and <img alt="C^2_{i,j,c}=\delta_{i,j} A_c" class="math" src="_images/math/11a49fe5f012bf2a1824359b5c5a579cd6f0ddeb.svg"/>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor0</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">Ptensor0(1,2,3):</span>
@@ -500,6 +503,40 @@ Therefore , this map multiplies the number of channels five-fold.</p>
 </div>
 </section>
 </section>
+<section id="linmaps-between-ptensor-layers">
+<h2>Linmaps between Ptensor layers<a class="headerlink" href="#linmaps-between-ptensor-layers" title="Permalink to this headline">¶</a></h2>
+<p>In permutation equivariant nets, linmaps are often applied to an entire layer of Ptensors, i.e.,
+to every Ptensor in the layer. <cite>ptens</cite> can accomplish this in a single function call.
+When working on the GPU, the operation is automatically parallelized across Ptensors.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors1</span><span class="o">.</span><span class="n">randn</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">]],</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">Ptensor1 [1,2]:</span>
+<span class="go">[ -0.87019 0.410812 ]</span>
+<span class="go">[ 0.391992 -0.44689 ]</span>
+
+<span class="go">Ptensor1 [2,3]:</span>
+<span class="go">[ -0.195719 -1.67327 ]</span>
+<span class="go">[ -1.12695 -2.06142 ]</span>
+
+<span class="go">Ptensor1 [4]:</span>
+<span class="go">[ -0.576893 -0.397062 ]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">linmaps1</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span>
+<span class="go">Ptensor1 [1,2]:</span>
+<span class="go">[ -0.478197 -0.0360771 -0.87019 0.410812 ]</span>
+<span class="go">[ -0.478197 -0.0360771 0.391992 -0.44689 ]</span>
+
+<span class="go">Ptensor1 [2,3]:</span>
+<span class="go">[ -1.32267 -3.73469 -0.195719 -1.67327 ]</span>
+<span class="go">[ -1.32267 -3.73469 -1.12695 -2.06142 ]</span>
+
+<span class="go">Ptensor1 [4]:</span>
+<span class="go">[ -0.576893 -0.397062 -0.576893 -0.397062 ]</span>
+</pre></div>
+</div>
+</section>
+</section>
 
         </article>
       </div>
@@ -515,14 +552,14 @@ Therefore , this map multiplies the number of channels five-fold.</p>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="ptensorsk.html">
+          <a class="prev-page" href="graph.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Ptensor layers</div>
+                <div class="title">Graphs</div>
                 
               </div>
             </a>
@@ -555,9 +592,13 @@ Therefore , this map multiplies the number of channels five-fold.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Linmaps</a><ul>
+<li><a class="reference internal" href="#linmaps-between-ptensors">Linmaps between Ptensors</a><ul>
 <li><a class="reference internal" href="#linmaps0">linmaps0</a></li>
 <li><a class="reference internal" href="#linmaps1">linmaps1</a></li>
 <li><a class="reference internal" href="#linmaps2">linmaps2</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#linmaps-between-ptensor-layers">Linmaps between Ptensor layers</a></li>
 </ul>
 </li>
 </ul>

@@ -160,6 +160,9 @@
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Ptensor layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linmaps.html">Linmaps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gather.html">Gather layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unite.html">Unite layers</a></li>
 </ul>
 
 </div>
@@ -190,12 +193,12 @@
 <h1>Ptensor layers<a class="headerlink" href="#ptensor-layers" title="Permalink to this headline">¶</a></h1>
 <p>In most applications, Ptensors are organized into layers, represented by the
 <code class="docutils literal notranslate"><span class="pre">ptensors0</span></code>, <code class="docutils literal notranslate"><span class="pre">ptensors1</span></code> and <code class="docutils literal notranslate"><span class="pre">tensors2</span></code> classes.
-One of the keys to efficient message passing is that <cite>ptens</cite> can operate
+A key feature of <cite>ptens</cite> is that it can operate
 on all the Ptensors in a given layer <em>in parallel</em>, even if their reference domains are of different sizes.</p>
 <section id="defining-ptensor-layers">
 <h2>Defining Ptensor layers<a class="headerlink" href="#defining-ptensor-layers" title="Permalink to this headline">¶</a></h2>
-<p>One way to define Ptensor layers is using the <code class="docutils literal notranslate"><span class="pre">zero</span></code>, <code class="docutils literal notranslate"><span class="pre">randn</span></code> or <code class="docutils literal notranslate"><span class="pre">sequential</span></code> constructors,
-similalry to how individual Ptensors can be constructed.
+<p>Similarly to individual Ptensors, the Ptensor layers classes also provide
+<code class="docutils literal notranslate"><span class="pre">zero</span></code>, <code class="docutils literal notranslate"><span class="pre">randn</span></code> or <code class="docutils literal notranslate"><span class="pre">sequential</span></code> constructors.
 For example, the following creates a layer consisting of three
 random first order Ptensors with reference domains <img alt="(1,2,3)" class="math" src="_images/math/efc18c906b29caf3a54303fba549fdae2480400b.svg"/>, <img alt="(3,5)" class="math" src="_images/math/4d7fecdc6f705d8cdd8d1a376b81f39a01c25960.svg"/> and <img alt="(2)" class="math" src="_images/math/62af81748a72ac25ea96af2f67d7626df9c9a3a3.svg"/>
 and 3 channels:</p>
@@ -214,9 +217,6 @@ and 3 channels:</p>
 <span class="go">[ 0.584898 -0.660558 0.534755 ]</span>
 </pre></div>
 </div>
-</section>
-<section id="getters-and-setters">
-<h2>Getters and setters<a class="headerlink" href="#getters-and-setters" title="Permalink to this headline">¶</a></h2>
 <p>Unlike individual Ptensors, the <code class="docutils literal notranslate"><span class="pre">ptensors0</span></code>, <code class="docutils literal notranslate"><span class="pre">ptensors1</span></code> and <code class="docutils literal notranslate"><span class="pre">tensors2</span></code> classes
 are not derived classes of <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>. For 0’th order Ptensor layers, however, it
 is possible to define the layer
@@ -258,6 +258,9 @@ PyTorch tensor:</p>
 <span class="go">        [2., 2., 2., 2., 2.]])</span>
 </pre></div>
 </div>
+</section>
+<section id="getters-and-setters">
+<h2>Getters and setters<a class="headerlink" href="#getters-and-setters" title="Permalink to this headline">¶</a></h2>
 <p>For higher order tensor layers, the individual tensors have to be accessed one by one if they are to
 be converted to a Pytorch tensor, for example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors1</span><span class="o">.</span><span class="n">randn</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">]],</span><span class="mi">5</span><span class="p">)</span>
@@ -280,15 +283,17 @@ be converted to a Pytorch tensor, for example:</p>
 <span class="go">[ 1.16493 0.584898 -0.660558 0.534755 -0.607787 ]</span>
 </pre></div>
 </div>
-<p>Note that accessing individual tensors, as well as the constructor and <code class="docutils literal notranslate"><span class="pre">torch()</span></code> methods for <code class="docutils literal notranslate"><span class="pre">ptensors0</span></code>
+<p>Accessing individual tensors, as well as the constructor and <code class="docutils literal notranslate"><span class="pre">torch()</span></code> methods for <code class="docutils literal notranslate"><span class="pre">ptensors0</span></code>
 described above are differentiable operations.</p>
 </section>
-<section id="operations-on-ptensor-layers">
-<h2>Operations on Ptensor layers<a class="headerlink" href="#operations-on-ptensor-layers" title="Permalink to this headline">¶</a></h2>
+<section id="equivariant-operations-on-ptensor-layers">
+<h2>Equivariant operations on Ptensor layers<a class="headerlink" href="#equivariant-operations-on-ptensor-layers" title="Permalink to this headline">¶</a></h2>
 <p>Because the Ptensor layers are not subclasses of  <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, they do not automatically inherit all the
 usual arithmetic operations like addition multiplication by scalars, etc..
-Currently, three basic operations are implemented for these classes: addition, concatenation and
-multiplication by matrices. All three of these operations are differentiable.</p>
+Currently, four basic operations are implemented for these classes: addition, concatenation,
+multiplication by matrices, and the ReU operator.
+All three of these operations are equivariant and implemented
+in a way that supports backpropagating gradients through them.</p>
 <section id="addition-and-concatenation">
 <h3>Addition and concatenation<a class="headerlink" href="#addition-and-concatenation" title="Permalink to this headline">¶</a></h3>
 <p>Two matching Ptensor layers (i.e., two layers such that the i’th tensor in the first layer has the
@@ -364,6 +369,34 @@ The following example demostrates this for a <code class="docutils literal notra
 </pre></div>
 </div>
 </section>
+<section id="relu">
+<h3>ReLU<a class="headerlink" href="#relu" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">relu(x,alpha)</span></code> applies the function <img alt="sigma(x)=\textrm{max}(x,\alpha x)" class="math" src="_images/math/71941d49e0aa24a95cb0aa2d1a5556f054f40b20.svg"/>
+(with <img alt="0\leq \alpha&lt;1" class="math" src="_images/math/e1ffcae591f6540aee6d848823d3db01bba71307.svg"/>) elementwise and  can be applied to Ptensor layers of any order.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">ptensors0</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="go">Ptensor0 [0]:</span>
+<span class="go">[ -1.23974 -0.407472 1.61201 ]</span>
+
+<span class="go">Ptensor0 [1]:</span>
+<span class="go">[ 0.399771 1.3828 0.0523187 ]</span>
+
+<span class="go">Ptensor0 [2]:</span>
+<span class="go">[ -0.904146 1.87065 -1.66043 ]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="go">Ptensor0 [0]:</span>
+<span class="go">[ -0.123974 -0.0407472 1.61201 ]</span>
+
+<span class="go">Ptensor0 [1]:</span>
+<span class="go">[ 0.399771 1.3828 0.0523187 ]</span>
+
+<span class="go">Ptensor0 [2]:</span>
+<span class="go">[ -0.0904147 1.87065 -0.166043 ]</span>
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 
@@ -423,9 +456,10 @@ The following example demostrates this for a <code class="docutils literal notra
 <li><a class="reference internal" href="#">Ptensor layers</a><ul>
 <li><a class="reference internal" href="#defining-ptensor-layers">Defining Ptensor layers</a></li>
 <li><a class="reference internal" href="#getters-and-setters">Getters and setters</a></li>
-<li><a class="reference internal" href="#operations-on-ptensor-layers">Operations on Ptensor layers</a><ul>
+<li><a class="reference internal" href="#equivariant-operations-on-ptensor-layers">Equivariant operations on Ptensor layers</a><ul>
 <li><a class="reference internal" href="#addition-and-concatenation">Addition and concatenation</a></li>
 <li><a class="reference internal" href="#multiplication-by-matrices">Multiplication by matrices</a></li>
+<li><a class="reference internal" href="#relu">ReLU</a></li>
 </ul>
 </li>
 </ul>

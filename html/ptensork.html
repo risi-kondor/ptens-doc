@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Ptensor layers" href="ptensorsk.html" /><link rel="prev" title="Welcome to ptens’s documentation!" href="index.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Ptensor layers" href="ptensorsk.html" /><link rel="prev" title="ptens documentation" href="index.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
         <title>Ptensors - ptens documentation</title>
@@ -158,6 +158,7 @@
 <ul class="current">
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Ptensors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ptensorsk.html">Ptensor layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Graphs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linmaps.html">Linmaps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer maps</a></li>
 </ul>
@@ -191,12 +192,12 @@
 <p>A <img alt="p" class="math" src="_images/math/393424208c035926e563f1310fb9b9dfc7052fd1.svg"/>’th order <em>permutationally covariant tensor</em> or <em>Ptensor</em> for short, with
 reference domain <img alt="(a_1,\ldots,a_k)" class="math" src="_images/math/c846f1a1411523d780cf1b7e30025a5e1c6b438e.svg"/> is a <img alt="(p+1)" class="math" src="_images/math/01ae58c87af84a98e1f7daacbcd60a70fad2a2da.svg"/>’th order tensor
 <img alt="A\in\mathbb{R}^{k\times k\times\ldots\times k\times c}" class="math" src="_images/math/ba9454397cdfe538cfaf2ce4d7a01407a66128fa.svg"/>, where <img alt="c" class="math" src="_images/math/9991f30201a1b175c501032a3f9df38616881f91.svg"/> is the number
-of channels. The elements of reference domain are called <cite>atoms</cite>.
+of channels. The elements of the reference domain are called <cite>atoms</cite>.
 The defining property of Ptensors is that if <img alt="(a_1,\ldots,a_k)" class="math" src="_images/math/c846f1a1411523d780cf1b7e30025a5e1c6b438e.svg"/> are permuted
 by a permutation <img alt="\sigma" class="math" src="_images/math/10195c3d2f8eda046f57a3474889a59a2b215d2b.svg"/>, then <img alt="A" class="math" src="_images/math/565db5272a70df8fe06f163b6a0deedd44272896.svg"/> transforms to <img alt="A'" class="math" src="_images/math/cd47360ae43521ddfad3949a2bcfcb1e917a8876.svg"/> with</p>
 <div class="math-wrapper"><div class="math">
 <p><img alt="A'_{i_1,\ldots,i_k,c}=A_{i_{\sigma^{-1}(1)},\ldots,i_{\sigma^{-1}(k)},c}" src="_images/math/03903dbfa3a42391148c2b33c1c82650a72ccde9.svg"/></p>
-</div></div><p>Currently <cite>ptens</cite> supports zeroth, first and second order Ptensors. thecorresponding classes
+</div></div><p>Currently <cite>ptens</cite> supports zeroth, first and second order Ptensors. The corresponding classes are
 <code class="docutils literal notranslate"><span class="pre">ptensor0</span></code>, <code class="docutils literal notranslate"><span class="pre">ptensor1</span></code> and <code class="docutils literal notranslate"><span class="pre">ptensor2</span></code>. Each of these classes is derived
 <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, allowing all the usual PyTorch arithmetic operations to be applied to PTensors.
 Note, however, that some of these operations might break equivariance. For example, changing
@@ -257,7 +258,7 @@ size of the reference domain. For example, the following creates a first order P
 <span class="go">  [ -0.0366747 -0.563576 0.233288 ]</span>
 </pre></div>
 </div>
-<p>For debugging purposes <cite>ptens</cite> also provides a <code class="docutils literal notranslate"><span class="pre">sequential</span></code> initializer for each of these classes, e.g.:</p>
+<p>For debugging purposes <cite>ptens</cite> also provides a <code class="docutils literal notranslate"><span class="pre">sequential</span></code> initializer, e.g.:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor1</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">Ptensor1(1,2,3):</span>

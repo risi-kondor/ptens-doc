@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Linmaps" href="linmaps.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Graphs" href="graph.html" /><link rel="prev" title="Linmaps" href="linmaps.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
         <title>Transfer maps - ptens documentation</title>
@@ -160,6 +160,8 @@
 <li class="toctree-l1"><a class="reference internal" href="ptensorsk.html">Ptensor layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linmaps.html">Linmaps</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Transfer maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gather.html">Gather layers</a></li>
 </ul>
 
 </div>
@@ -190,10 +192,12 @@
 <h1>Transfer maps<a class="headerlink" href="#transfer-maps" title="Permalink to this headline">¶</a></h1>
 <p>When passing messages between Ptensors whose reference domains are different, instead of the <code class="docutils literal notranslate"><span class="pre">linmaps</span></code>
 functions, the <code class="docutils literal notranslate"><span class="pre">transfer</span></code> functions must be used.</p>
+<section id="transfer-maps-between-ptensors">
+<h2>Transfer maps between Ptensors<a class="headerlink" href="#transfer-maps-between-ptensors" title="Permalink to this headline">¶</a></h2>
 <section id="transfer0">
-<h2>transfer0<a class="headerlink" href="#transfer0" title="Permalink to this headline">¶</a></h2>
-<p>Similarly to <code class="docutils literal notranslate"><span class="pre">linmaps0</span></code>, the <code class="docutils literal notranslate"><span class="pre">transfer0</span></code> function passes equivariant linear messages to a zeroth Ptensor.
-Unlike <code class="docutils literal notranslate"><span class="pre">linmaps0</span></code>, however, the reference domain of the output must be specified explicitly.</p>
+<h3>transfer0<a class="headerlink" href="#transfer0" title="Permalink to this headline">¶</a></h3>
+<p>Similarly to <code class="docutils literal notranslate"><span class="pre">linmaps0</span></code>, the <code class="docutils literal notranslate"><span class="pre">transfer0</span></code> function passes equivariant linear messages to a zeroth order Ptensor.
+In contrast to <code class="docutils literal notranslate"><span class="pre">linmaps0</span></code>, however, the reference domain of the output must be specified explicitly.</p>
 <p>The only possible equivariant map from a zeroth order Ptensor to a zeroth order Ptensor
 is a multiple of the identity:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor0</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">5</span><span class="p">)</span>
@@ -221,6 +225,9 @@ corresponding to the reference domain of the latter:</p>
 <span class="go">[ 3 4 5 ]</span>
 </pre></div>
 </div>
+<p>A second order Ptensor can transfer information to a zeroth order Ptensor either by
+summing the entire block corresponding to the intersection of their reference domains,
+or just its diagonal:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor2</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
 <span class="go">Ptensor2(1,2,3):</span>
@@ -239,6 +246,7 @@ corresponding to the reference domain of the latter:</p>
 <span class="go">  [ 11 14 17 ]</span>
 <span class="go">  [ 20 23 26 ]</span>
 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">transfer0</span><span class="p">(</span><span class="n">A</span><span class="p">,[</span><span class="mi">2</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span>
 <span class="go">Ptensor0(2):</span>
 <span class="go">[ 12 13 14 12 13 14 ]</span>
@@ -246,7 +254,9 @@ corresponding to the reference domain of the latter:</p>
 </div>
 </section>
 <section id="transfer1">
-<h2>transfer1<a class="headerlink" href="#transfer1" title="Permalink to this headline">¶</a></h2>
+<h3>transfer1<a class="headerlink" href="#transfer1" title="Permalink to this headline">¶</a></h3>
+<p>When a message is transferred from a zeroth order Ptensor to a first order Ptensor, effectively
+it is just copied into the row corresponding to the intersection of the reference domains:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor0</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">2</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
 <span class="go">Ptensor0(2):</span>
@@ -259,6 +269,9 @@ corresponding to the reference domain of the latter:</p>
 <span class="go">[ 0 0 0 ]</span>
 </pre></div>
 </div>
+<p>A message from a first order Ptensor to a first order Ptensor consists of the concatenation
+of two maps: copying to the intersection and broadcasting the sum over the elements of the
+intersection:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor1</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
 <span class="go">Ptensor1(1,2,3):</span>
@@ -266,11 +279,230 @@ corresponding to the reference domain of the latter:</p>
 <span class="go">[ 3 4 5 ]</span>
 <span class="go">[ 6 7 8 ]</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">transfer1</span><span class="p">(</span><span class="n">A</span><span class="p">,[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">transfer1</span><span class="p">(</span><span class="n">A</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span>
-<span class="go">Ptensor1(3,5):</span>
-<span class="go">[ 6 7 8 6 7 8 ]</span>
+<span class="go">Ptensor1 [2,3,5]:</span>
+<span class="go">[ 9 11 13 3 4 5 ]</span>
+<span class="go">[ 9 11 13 6 7 8 ]</span>
 <span class="go">[ 0 0 0 0 0 0 ]</span>
+</pre></div>
+</div>
+<p>When a message is passed from a second order Ptensor to a first order Ptensor we have 5 possible
+linear maps, hence the number of channels is multiplied by five.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor2</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">Ptensor2 [1,2,3]:</span>
+<span class="go">channel 0:</span>
+<span class="go">  [ 0 3 6 ]</span>
+<span class="go">  [ 9 12 15 ]</span>
+<span class="go">  [ 18 21 24 ]</span>
+
+<span class="go">channel 1:</span>
+<span class="go">  [ 1 4 7 ]</span>
+<span class="go">  [ 10 13 16 ]</span>
+<span class="go">  [ 19 22 25 ]</span>
+
+<span class="go">channel 2:</span>
+<span class="go">  [ 2 5 8 ]</span>
+<span class="go">  [ 11 14 17 ]</span>
+<span class="go">  [ 20 23 26 ]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">transfer1</span><span class="p">(</span><span class="n">A</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span>
+<span class="go">Ptensor1 [2,3,5]:</span>
+<span class="go">[ 72 76 80 36 38 40 33 35 37 27 29 31 12 13 14 ]</span>
+<span class="go">[ 72 76 80 36 38 40 39 41 43 45 47 49 24 25 26 ]</span>
+<span class="go">[ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]</span>
+</pre></div>
+</div>
+</section>
+<section id="transfer2">
+<h3>transfer2<a class="headerlink" href="#transfer2" title="Permalink to this headline">¶</a></h3>
+<p>Similarly to linmaps, the number of possible transfers maps from zeroth, first and second order
+Ptensors to second order Ptensors is 2,5 and 15, respectively:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor0</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">2</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">Ptensor0 [2]:</span>
+<span class="go">[ 0 1 2 ]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">transfer2</span><span class="p">(</span><span class="n">A</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span>
+<span class="go">Ptensor2 [2,3,5]:</span>
+<span class="go">channel 0:</span>
+<span class="go">  [ 0 0 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 1:</span>
+<span class="go">  [ 1 0 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 2:</span>
+<span class="go">  [ 2 0 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 3:</span>
+<span class="go">  [ 0 0 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 4:</span>
+<span class="go">  [ 1 0 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 5:</span>
+<span class="go">  [ 2 0 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor1</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">Ptensor1 [1,2,3]:</span>
+<span class="go">[ 0 1 2 ]</span>
+<span class="go">[ 3 4 5 ]</span>
+<span class="go">[ 6 7 8 ]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">transfer2</span><span class="p">(</span><span class="n">A</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span>
+<span class="go">Ptensor2 [2,3,5]:</span>
+<span class="go">channel 0:</span>
+<span class="go">  [ 9 9 0 ]</span>
+<span class="go">  [ 9 9 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 1:</span>
+<span class="go">  [ 11 11 0 ]</span>
+<span class="go">  [ 11 11 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 2:</span>
+<span class="go">  [ 13 13 0 ]</span>
+<span class="go">  [ 13 13 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 3:</span>
+<span class="go">  [ 9 0 0 ]</span>
+<span class="go">  [ 0 9 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 4:</span>
+<span class="go">  [ 11 0 0 ]</span>
+<span class="go">  [ 0 11 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 5:</span>
+<span class="go">  [ 13 0 0 ]</span>
+<span class="go">  [ 0 13 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 6:</span>
+<span class="go">  [ 3 6 0 ]</span>
+<span class="go">  [ 3 6 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 7:</span>
+<span class="go">  [ 4 7 0 ]</span>
+<span class="go">  [ 4 7 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor2</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">Ptensor2 [1,2,3]:</span>
+<span class="go">channel 0:</span>
+<span class="go">  [ 0 3 6 ]</span>
+<span class="go">  [ 9 12 15 ]</span>
+<span class="go">  [ 18 21 24 ]</span>
+
+<span class="go">channel 1:</span>
+<span class="go">  [ 1 4 7 ]</span>
+<span class="go">  [ 10 13 16 ]</span>
+<span class="go">  [ 19 22 25 ]</span>
+
+<span class="go">channel 2:</span>
+<span class="go">  [ 2 5 8 ]</span>
+<span class="go">  [ 11 14 17 ]</span>
+<span class="go">  [ 20 23 26 ]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">transfer2</span><span class="p">(</span><span class="n">A</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span>
+<span class="go">Ptensor2 [2,3,5]:</span>
+<span class="go">channel 0:</span>
+<span class="go">  [ 72 72 0 ]</span>
+<span class="go">  [ 72 72 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 1:</span>
+<span class="go">  [ 76 76 0 ]</span>
+<span class="go">  [ 76 76 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 2:</span>
+<span class="go">  [ 80 80 0 ]</span>
+<span class="go">  [ 80 80 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 3:</span>
+<span class="go">  [ 36 36 0 ]</span>
+<span class="go">  [ 36 36 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 4:</span>
+<span class="go">  [ 38 38 0 ]</span>
+<span class="go">  [ 38 38 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 5:</span>
+<span class="go">  [ 40 40 0 ]</span>
+<span class="go">  [ 40 40 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 6:</span>
+<span class="go">  [ 72 0 0 ]</span>
+<span class="go">  [ 0 72 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+
+<span class="go">channel 7:</span>
+<span class="go">  [ 76 0 0 ]</span>
+<span class="go">  [ 0 76 0 ]</span>
+<span class="go">  [ 0 0 0 ]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="transfer-maps-between-ptensor-layers">
+<h2>Transfer maps between Ptensor layers<a class="headerlink" href="#transfer-maps-between-ptensor-layers" title="Permalink to this headline">¶</a></h2>
+<p>When transferring messages between Ptensor layers, we must specify two things: the reference domains
+of every tensor in the second layer, and the graph that defines which Ptensors send messages to which Ptensors
+(see the section on Graphs):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors1</span><span class="o">.</span><span class="n">randn</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">]],</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+
+<span class="go">Ptensor1 [1,2]:</span>
+<span class="go">[ -1.23974 -0.407472 1.61201 ]</span>
+<span class="go">[ 0.399771 1.3828 0.0523187 ]</span>
+
+<span class="go">Ptensor1 [3]:</span>
+<span class="go">[ -0.904146 1.87065 -1.66043 ]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">transfer1</span><span class="p">(</span><span class="n">A</span><span class="p">,[[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]],</span><span class="n">G</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+
+<span class="go">Ptensor1 [1]:</span>
+<span class="go">[ -1.23974 -0.407472 1.61201 -1.23974 -0.407472 1.61201 ]</span>
+
+<span class="go">Ptensor1 [2,3]:</span>
+<span class="go">[ 0.399771 1.3828 0.0523187 0.399771 1.3828 0.0523187 ]</span>
+<span class="go">[ -0.904146 1.87065 -1.66043 -0.904146 1.87065 -1.66043 ]</span>
+
+<span class="go">Ptensor1 [1,3]:</span>
+<span class="go">[ -1.23974 -0.407472 1.61201 -1.23974 -0.407472 1.61201 ]</span>
+<span class="go">[ -0.904146 1.87065 -1.66043 -0.904146 1.87065 -1.66043 ]</span>
 </pre></div>
 </div>
 </section>
@@ -281,7 +513,15 @@ corresponding to the reference domain of the latter:</p>
       <footer>
         
         <div class="related-pages">
-          
+          <a class="next-page" href="graph.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Graphs</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
           <a class="prev-page" href="linmaps.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
@@ -322,8 +562,13 @@ corresponding to the reference domain of the latter:</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Transfer maps</a><ul>
+<li><a class="reference internal" href="#transfer-maps-between-ptensors">Transfer maps between Ptensors</a><ul>
 <li><a class="reference internal" href="#transfer0">transfer0</a></li>
 <li><a class="reference internal" href="#transfer1">transfer1</a></li>
+<li><a class="reference internal" href="#transfer2">transfer2</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#transfer-maps-between-ptensor-layers">Transfer maps between Ptensor layers</a></li>
 </ul>
 </li>
 </ul>

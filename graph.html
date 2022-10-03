@@ -199,7 +199,7 @@ dense matrix:</p>
 </pre></div>
 </div>
 <p>Graphs are stored in a custom sparse datastructure, allowing <cite>ptens</cite> to potentially handle graphs with a
-very large number of vertices. Correspondingly, graphs are printed out by listing the edges incident
+large number of vertices. Graphs are printed out by listing the edges incident
 on each vertex. Continuing the above example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">G</span>
 <span class="go">0&lt;-((1,1))</span>
@@ -214,7 +214,7 @@ on each vertex. Continuing the above example:</p>
 <span class="go">        [0., 1., 0.]])</span>
 </pre></div>
 </div>
-<p>Random (undirected) graphs can be easily constructed using the <code class="docutils literal notranslate"><span class="pre">random</span></code> constructor, by providing
+<p>Random (undirected) graphs can be constructed using the <code class="docutils literal notranslate"><span class="pre">random</span></code> constructor, by providing
 the number of vertices and the probability of there being an edge beween any two vertices:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mf">0.3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">.</span><span class="n">torch</span><span class="p">()</span>
@@ -230,7 +230,7 @@ the number of vertices and the probability of there being an edge beween any two
 </div>
 <section id="neighborhoods">
 <h2>Neighborhoods<a class="headerlink" href="#neighborhoods" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">graph</span></code> class provides some functionality specifically demanded by equivariant graph neural nets.
+<p>The <code class="docutils literal notranslate"><span class="pre">graph</span></code> class provides some specialized functionality required by equivariant graph neural nets.
 One feature of such networks is that thee references domains of the neurons correspond to
 the k-neighborhoods around each vertex in the graph.
 The <code class="docutils literal notranslate"><span class="pre">nhoods(k)</span></code> function returns these reference domains as <code class="docutils literal notranslate"><span class="pre">atomspack</span></code> objects.</p>
