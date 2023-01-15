@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Linmaps" href="linmaps.html" /><link rel="prev" title="Ptensor layers" href="ptensorsk.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Gather layers" href="gather.html" /><link rel="prev" title="Transfer maps" href="transfer.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
         <title>Graphs - ptens documentation</title>
@@ -158,9 +158,11 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="ptensork.html">Ptensors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ptensorsk.html">Ptensor layers</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Graphs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linmaps.html">Linmaps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer maps</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gather.html">Gather layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unite.html">Unite layers</a></li>
 </ul>
 
 </div>
@@ -198,7 +200,13 @@ dense matrix:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Graphs are stored in a custom sparse datastructure, allowing <cite>ptens</cite> to potentially handle graphs with a
+<p>Alternatively, it can be initialized from an “edge index”, which is just a <img alt="2\times E" class="math" src="_images/math/51e1e6332cc1032e47c56898434350a6c2e82476.svg"/> integer
+tensor, listing all the edges:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">from_edge_index</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Graphs are stored in a custom sparse data structure, allowing <cite>ptens</cite> to potentially handle graphs with a
 large number of vertices. Graphs are printed out by listing the edges incident
 on each vertex. Continuing the above example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">G</span>
@@ -267,6 +275,58 @@ The <code class="docutils literal notranslate"><span class="pre">nhoods(k)</span
 </pre></div>
 </div>
 </section>
+<section id="edges-and-subgraphs">
+<h2>Edges and subgraphs<a class="headerlink" href="#edges-and-subgraphs" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">edges()</span></code> method returns the list of edges in <code class="docutils literal notranslate"><span class="pre">G</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">E</span><span class="o">=</span><span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+<span class="go">(0,1)</span>
+<span class="go">(1,0)</span>
+<span class="go">(1,2)</span>
+<span class="go">(2,1)</span>
+<span class="go">(2,7)</span>
+<span class="go">(4,5)</span>
+<span class="go">(4,6)</span>
+<span class="go">(4,7)</span>
+<span class="go">(5,4)</span>
+<span class="go">(6,4)</span>
+<span class="go">(7,2)</span>
+<span class="go">(7,4)</span>
+</pre></div>
+</div>
+<p>More generally, if we define a second graph <code class="docutils literal notranslate"><span class="pre">H</span></code>, the <code class="docutils literal notranslate"><span class="pre">subgraphs(H)</span></code> method finds all occurrences of <code class="docutils literal notranslate"><span class="pre">H</span></code>
+in <code class="docutils literal notranslate"><span class="pre">G</span></code> as a subgraph as an <code class="docutils literal notranslate"><span class="pre">atomspack</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">triangle</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">S</span><span class="o">=</span><span class="n">G</span><span class="o">.</span><span class="n">subgraphs</span><span class="p">(</span><span class="n">triangle</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">S</span>
+<span class="go">(0,1,6)</span>
+<span class="go">(0,3,6)</span>
+<span class="go">(0,5,6)</span>
+<span class="go">(1,4,6)</span>
+<span class="go">(4,5,6)</span>
+<span class="go">(4,5,7)</span>
+<span class="go">(4,6,7)</span>
+<span class="go">(5,6,7)</span>
+</pre></div>
+</div>
+</section>
+<section id="overlaps">
+<h2>Overlaps<a class="headerlink" href="#overlaps" title="Permalink to this headline">¶</a></h2>
+<p>Given two <code class="docutils literal notranslate"><span class="pre">atomspack</span></code> objects, the <code class="docutils literal notranslate"><span class="pre">overlaps(A,B)</span></code> method creates a bipartite graph in which in which
+there is an edge from <code class="docutils literal notranslate"><span class="pre">i</span></code> to <code class="docutils literal notranslate"><span class="pre">j</span></code> if the <code class="docutils literal notranslate"><span class="pre">i</span></code> ‘th set in <code class="docutils literal notranslate"><span class="pre">A</span></code> has a non-zero intersection with the
+<code class="docutils literal notranslate"><span class="pre">j</span></code> ‘th set in <code class="docutils literal notranslate"><span class="pre">B</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens_base</span><span class="o">.</span><span class="n">atomspack</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens_base</span><span class="o">.</span><span class="n">atomspack</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">overlaps</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">.</span><span class="n">torch</span><span class="p">()</span>
+<span class="go">tensor([[1., 0., 1.],</span>
+<span class="go">        [0., 1., 0.],</span>
+<span class="go">        [0., 1., 0.]])</span>
+</pre></div>
+</div>
+</section>
 </section>
 
         </article>
@@ -274,23 +334,23 @@ The <code class="docutils literal notranslate"><span class="pre">nhoods(k)</span
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="linmaps.html">
+          <a class="next-page" href="gather.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Linmaps</div>
+                <div class="title">Gather layers</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="ptensorsk.html">
+          <a class="prev-page" href="transfer.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Ptensor layers</div>
+                <div class="title">Transfer maps</div>
                 
               </div>
             </a>
@@ -324,6 +384,8 @@ The <code class="docutils literal notranslate"><span class="pre">nhoods(k)</span
             <ul>
 <li><a class="reference internal" href="#">Graphs</a><ul>
 <li><a class="reference internal" href="#neighborhoods">Neighborhoods</a></li>
+<li><a class="reference internal" href="#edges-and-subgraphs">Edges and subgraphs</a></li>
+<li><a class="reference internal" href="#overlaps">Overlaps</a></li>
 </ul>
 </li>
 </ul>
