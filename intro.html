@@ -202,23 +202,19 @@
 <ol class="arabic simple">
 <li><p>Download the <a class="reference external" href="https://github.com/risi-kondor/cnine">cnine</a>  library
 and install it on your system</p></li>
-<li><p>Download <cite>ptens</cite> from <a class="reference external" href="https://github.com/risi-kondor/ptens">github</a>.</p></li>
-<li><p>Download <a class="reference external" href="https://github.com/risi-kondor/GElib">GElib</a>.
+<li><p>Download <cite>ptens</cite> from <a class="reference external" href="https://github.com/risi-kondor/ptens">github</a>.
 By default, it is assumed that cnine and ptens are downloaded to the same directory
 (e.g., <code class="docutils literal notranslate"><span class="pre">Downloads</span></code>).</p></li>
 <li><p>Edit the user configurable variables in <code class="docutils literal notranslate"><span class="pre">python/setup.py</span></code> as necessary.</p></li>
 <li><p>Run the command <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> in the <code class="docutils literal notranslate"><span class="pre">ptens/python</span></code> directory.</p></li>
 </ol>
-<p>To use <cite>ptens</cite> from Python, load the module the usual way with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">ptens</span></code>.
-..
-If <cite>ptens</cite> was compiled with GPU support, you must first <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">torch</span></code>.</p>
+<p>To use <cite>ptens</cite> from Python, load the module the usual way with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">ptens</span></code>.</p>
 <section id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
 <p>The <cite>ptens</cite> installation can be configured by setting the corresponding variables in <code class="docutils literal notranslate"><span class="pre">python/setup.py</span></code>.</p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">compile_with_cuda</span></code></dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, <cite>ptens</cite> will be compiled with GPU suport. This requires a working CUDA and CUBLAS installation
-on your system and PyTorch itself having been compiled with CUDA enabled. To make sure that the appropriate
-runtime libraries are loaded, you must always import <code class="docutils literal notranslate"><span class="pre">torch</span></code> before importing <code class="docutils literal notranslate"><span class="pre">ptens</span></code>.</p>
+and PyTorch itself having been compiled with CUDA enabled.</p>
 </dd>
 </dl>
 </section>

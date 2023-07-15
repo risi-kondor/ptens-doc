@@ -192,7 +192,7 @@
         <article role="main">
           <section id="graphs">
 <h1>Graphs<a class="headerlink" href="#graphs" title="Permalink to this headline">¶</a></h1>
-<p>One of the primary applications of permutation equivariant neural nets is the contructon of graph neural
+<p>One of the primary applications of permutation equivariant neural nets are graph neural
 networks. The <code class="docutils literal notranslate"><span class="pre">ptens.graph</span></code> class provides the necessary functionality to build graph neural nets
 consisting of Ptensor layers.</p>
 <p>A <code class="docutils literal notranslate"><span class="pre">graph</span></code> object can be initialized directly from its adjacency matrix, represented as an <img alt="n \times n" class="math" src="_images/math/559deeff9ff1b33662716f7cfad33934875f73a5.svg"/>
@@ -240,9 +240,9 @@ the number of vertices and the probability of there being an edge beween any two
 <section id="neighborhoods">
 <h2>Neighborhoods<a class="headerlink" href="#neighborhoods" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">graph</span></code> class provides some specialized functionality required by equivariant graph neural nets.
-One feature of such networks is that thee references domains of the neurons correspond to
+In certain classes of GNNs, the references domains of the neurons correspond to
 the k-neighborhoods around each vertex in the graph.
-The <code class="docutils literal notranslate"><span class="pre">nhoods(k)</span></code> function returns these reference domains as <code class="docutils literal notranslate"><span class="pre">atomspack</span></code> objects.</p>
+The <code class="docutils literal notranslate"><span class="pre">nhoods(k)</span></code> function returns these reference domains as an <code class="docutils literal notranslate"><span class="pre">atomspack</span></code> object.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mf">0.2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">.</span><span class="n">nhoods</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="go">(0)</span>
@@ -297,7 +297,7 @@ The <code class="docutils literal notranslate"><span class="pre">nhoods(k)</span
 </pre></div>
 </div>
 <p>More generally, if we define a second graph <code class="docutils literal notranslate"><span class="pre">H</span></code>, the <code class="docutils literal notranslate"><span class="pre">subgraphs(H)</span></code> method finds all occurrences of <code class="docutils literal notranslate"><span class="pre">H</span></code>
-in <code class="docutils literal notranslate"><span class="pre">G</span></code> as a subgraph as an <code class="docutils literal notranslate"><span class="pre">atomspack</span></code>:</p>
+in <code class="docutils literal notranslate"><span class="pre">G</span></code> as a subgraph and returns the result as an <code class="docutils literal notranslate"><span class="pre">atomspack</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mf">0.6</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">triangle</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">S</span><span class="o">=</span><span class="n">G</span><span class="o">.</span><span class="n">subgraphs</span><span class="p">(</span><span class="n">triangle</span><span class="p">)</span>
@@ -315,7 +315,7 @@ in <code class="docutils literal notranslate"><span class="pre">G</span></code> 
 </section>
 <section id="overlaps">
 <h2>Overlaps<a class="headerlink" href="#overlaps" title="Permalink to this headline">¶</a></h2>
-<p>Given two <code class="docutils literal notranslate"><span class="pre">atomspack</span></code> objects, the <code class="docutils literal notranslate"><span class="pre">overlaps(A,B)</span></code> method creates a bipartite graph in which in which
+<p>Given two <code class="docutils literal notranslate"><span class="pre">atomspack</span></code> objects, the <code class="docutils literal notranslate"><span class="pre">overlaps(A,B)</span></code> method creates a bipartite graph in which
 there is an edge from <code class="docutils literal notranslate"><span class="pre">i</span></code> to <code class="docutils literal notranslate"><span class="pre">j</span></code> if the <code class="docutils literal notranslate"><span class="pre">i</span></code> ‘th set in <code class="docutils literal notranslate"><span class="pre">A</span></code> has a non-zero intersection with the
 <code class="docutils literal notranslate"><span class="pre">j</span></code> ‘th set in <code class="docutils literal notranslate"><span class="pre">B</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens_base</span><span class="o">.</span><span class="n">atomspack</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]])</span>
