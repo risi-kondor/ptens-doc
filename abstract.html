@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Unite layers" href="unite.html" /><link rel="prev" title="Graphs" href="graph.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
 
     <meta name="generator" content="sphinx-4.2.0, furo 2021.10.09"/>
-        <title>Gather layers - ptens documentation</title>
+        <title>&lt;no title&gt; - ptens documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=0254c309f5cadf746f1a613e7677379ac9c8cdcd" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=16fb25fabf47304eee183a5e9af80b1ba98259b1" />
@@ -155,14 +155,14 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Installation</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ptensork.html">Ptensors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ptensorsk.html">Ptensor layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linmaps.html">Linmaps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer maps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Graphs</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Gather layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gather.html">Gather layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unite.html">Unite layers</a></li>
 </ul>
 
@@ -190,81 +190,19 @@
           </label>
         </div>
         <article role="main">
-          <section id="gather-layers">
-<h1>Gather layers<a class="headerlink" href="#gather-layers" title="Permalink to this headline">¶</a></h1>
-<p>The simplest type of equivariant message passing is the type described in (Gilmer et al. 2017),
-mapping a a zeroth order Ptensor layer to a zeroth order Ptensor layer simply by summing
-the messages coming from each neighbor node.
-This operation is implemented in the <code class="docutils literal notranslate"><span class="pre">gather</span></code> function:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors0</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
-<span class="go">Ptensor0 [0]:</span>
-<span class="go">[ -1.23974 -0.407472 1.61201 ]</span>
-
-<span class="go">Ptensor0 [1]:</span>
-<span class="go">[ 0.399771 1.3828 0.0523187 ]</span>
-
-<span class="go">Ptensor0 [2]:</span>
-<span class="go">[ -0.904146 1.87065 -1.66043 ]</span>
-
-<span class="go">Ptensor0 [3]:</span>
-<span class="go">[ -0.688081 0.0757219 1.47339 ]</span>
-
-<span class="go">Ptensor0 [4]:</span>
-<span class="go">[ 0.097221 -0.89237 -0.228782 ]</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">G</span>
-<span class="go">0&lt;-((2,1)(3,1)(4,1))</span>
-<span class="go">2&lt;-((0,1)(3,1)(4,1))</span>
-<span class="go">3&lt;-((0,1)(2,1)(4,1))</span>
-<span class="go">4&lt;-((0,1)(2,1)(3,1))</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">G</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span>
-<span class="go">Ptensor0 [0]:</span>
-<span class="go">[ -1.49501 1.05401 -0.415822 ]</span>
-
-<span class="go">Ptensor0 [1]:</span>
-<span class="go">[ 0 0 0 ]</span>
-
-<span class="go">Ptensor0 [2]:</span>
-<span class="go">[ -1.8306 -1.22412 2.85662 ]</span>
-
-<span class="go">Ptensor0 [3]:</span>
-<span class="go">[ -2.04666 0.570812 -0.277201 ]</span>
-
-<span class="go">Ptensor0 [4]:</span>
-<span class="go">[ -2.83196 1.5389 1.42497 ]</span>
-</pre></div>
-</div>
-</section>
+          <p><cite>ptens</cite> is a C++/CUDA library for permutation equivariant message passing and
+higher order equivariant graph neural networks.
+This document gives a high level introduction to <cite>ptens</cite>’s PyTorch interface.</p>
+<p><cite>ptens</cite> is developed by Risi Kondor’s research group and is released for noncommercial use only
+under a custom license that can be found in the file LICENSE.TXT</p>
 
         </article>
       </div>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="unite.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Unite layers</div>
-              </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="graph.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">Graphs</div>
-                
-              </div>
-            </a>
+          
+          
         </div>
 
         <div class="related-information">
@@ -273,7 +211,7 @@ This operation is implemented in the <code class="docutils literal notranslate">
               and
               <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
               <a href="https://github.com/pradyunsg/furo">Furo theme</a>. |
-            <a class="muted-link" href="_sources/gather.rst.txt"
+            <a class="muted-link" href="_sources/abstract.rst.txt"
                rel="nofollow">
               Show Source
             </a>

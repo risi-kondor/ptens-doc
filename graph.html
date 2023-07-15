@@ -156,6 +156,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ptensork.html">Ptensors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ptensorsk.html">Ptensor layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linmaps.html">Linmaps</a></li>
@@ -194,7 +195,7 @@
 <p>One of the primary applications of permutation equivariant neural nets is the contructon of graph neural
 networks. The <code class="docutils literal notranslate"><span class="pre">ptens.graph</span></code> class provides the necessary functionality to build graph neural nets
 consisting of Ptensor layers.</p>
-<p>A <code class="docutils literal notranslate"><span class="pre">graph</span></code> object can be initialized directly from its adjacency matrix, provided as an <img alt="n \times n" class="math" src="_images/math/559deeff9ff1b33662716f7cfad33934875f73a5.svg"/>
+<p>A <code class="docutils literal notranslate"><span class="pre">graph</span></code> object can be initialized directly from its adjacency matrix, represented as an <img alt="n \times n" class="math" src="_images/math/559deeff9ff1b33662716f7cfad33934875f73a5.svg"/>
 dense matrix:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
