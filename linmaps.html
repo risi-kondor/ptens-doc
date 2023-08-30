@@ -164,6 +164,9 @@
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Graphs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gather.html">Gather layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unite.html">Unite layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ggraph.html">Ggraphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subgraph.html">Subgraphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subgraph_layer0.html">Subgraph layers</a></li>
 </ul>
 
 </div>
@@ -325,7 +328,7 @@ Therefore , this map multiplies the number of channels five-fold.</p>
 <section id="linmaps2">
 <h3>linmaps2<a class="headerlink" href="#linmaps2" title="Permalink to this headline">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">linmaps2</span></code> maps a 0’th, 1’st or 2’nd order Ptensor to a 2’nd  order Ptensor.</p>
-<p>In the <img alt="\mathcal{P}_0\to\mathcal{P}_2" class="math" src="_images/math/deeef9bfdbc0c8479b95dd74208060c2c6252a07.svg"/> case there are two maps to consider:
+<p>In the <img alt="\mathcal{P}_0\to\mathcal{P}_2" class="math" src="_images/math/deeef9bfdbc0c8479b95dd74208060c2c6252a07.svg" style="vertical-align: -3px"/> case there are two maps to consider:
 <img alt="C^1_{i,j,c}=A_c" class="math" src="_images/math/8f923301dddd099a880c38c2dd903514bc3edb18.svg"/> and <img alt="C^2_{i,j,c}=\delta_{i,j} A_c" class="math" src="_images/math/11a49fe5f012bf2a1824359b5c5a579cd6f0ddeb.svg"/>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensor0</span><span class="o">.</span><span class="n">sequential</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>

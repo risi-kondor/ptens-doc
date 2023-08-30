@@ -164,6 +164,9 @@
 <li class="toctree-l1"><a class="reference internal" href="graph.html">Graphs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gather.html">Gather layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unite.html">Unite layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ggraph.html">Ggraphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subgraph.html">Subgraphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subgraph_layer0.html">Subgraph layers</a></li>
 </ul>
 
 </div>
@@ -201,7 +204,7 @@ on all the Ptensors in a given layer <em>in parallel</em>, even if their referen
 <p>Similarly to individual Ptensors, the Ptensor layers classes also provide
 <code class="docutils literal notranslate"><span class="pre">zero</span></code>, <code class="docutils literal notranslate"><span class="pre">randn</span></code> or <code class="docutils literal notranslate"><span class="pre">sequential</span></code> constructors.
 For example, the following creates a layer consisting of three
-random first order Ptensors with reference domains <img alt="(1,2,3)" class="math" src="_images/math/efc18c906b29caf3a54303fba549fdae2480400b.svg"/>, <img alt="(3,5)" class="math" src="_images/math/4d7fecdc6f705d8cdd8d1a376b81f39a01c25960.svg"/> and <img alt="(2)" class="math" src="_images/math/62af81748a72ac25ea96af2f67d7626df9c9a3a3.svg"/>
+random first order Ptensors with reference domains <img alt="(1,2,3)" class="math" src="_images/math/efc18c906b29caf3a54303fba549fdae2480400b.svg"/>, <img alt="(3,5)" class="math" src="_images/math/4d7fecdc6f705d8cdd8d1a376b81f39a01c25960.svg" style="vertical-align: -5px"/> and <img alt="(2)" class="math" src="_images/math/62af81748a72ac25ea96af2f67d7626df9c9a3a3.svg"/>
 and 3 channels:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">ptensors1</span><span class="o">.</span><span class="n">randn</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">],[</span><span class="mi">2</span><span class="p">]],</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
@@ -221,7 +224,7 @@ and 3 channels:</p>
 <p>Unlike individual Ptensors, the <code class="docutils literal notranslate"><span class="pre">ptensors0</span></code>, <code class="docutils literal notranslate"><span class="pre">ptensors1</span></code> and <code class="docutils literal notranslate"><span class="pre">tensors2</span></code> classes
 are not derived classes of <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>. For 0’th order Ptensor layers, however, it
 is possible to define the layer
-from an <img alt="N\times c" class="math" src="_images/math/2c5d8e1de7c2fd0c3cb5cdf904b218b4b674445b.svg"/> dimensional PyTorch tensor, where <img alt="c" class="math" src="_images/math/9991f30201a1b175c501032a3f9df38616881f91.svg"/> is the number of channels:</p>
+from an <img alt="N\times c" class="math" src="_images/math/2c5d8e1de7c2fd0c3cb5cdf904b218b4b674445b.svg" style="vertical-align: -2px"/> dimensional PyTorch tensor, where <img alt="c" class="math" src="_images/math/9991f30201a1b175c501032a3f9df38616881f91.svg"/> is the number of channels:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">M</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">M</span>
 <span class="go">tensor([[-1.2385, -0.4237, -1.2900, -1.4475,  0.2929],</span>
@@ -375,8 +378,8 @@ The following example demostrates this for a <code class="docutils literal notra
 </section>
 <section id="relu">
 <h3>ReLU<a class="headerlink" href="#relu" title="Permalink to this headline">¶</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">relu(x,alpha)</span></code> applies the function <img alt="sigma(x)=\textrm{max}(x,\alpha x)" class="math" src="_images/math/71941d49e0aa24a95cb0aa2d1a5556f054f40b20.svg"/>
-(with <img alt="0\leq \alpha&lt;1" class="math" src="_images/math/e1ffcae591f6540aee6d848823d3db01bba71307.svg"/>) elementwise and  can be applied to Ptensor layers of any order.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">relu(x,alpha)</span></code> applies the function <img alt="sigma(x)=\textrm{max}(x,\alpha x)" class="math" src="_images/math/71941d49e0aa24a95cb0aa2d1a5556f054f40b20.svg" style="vertical-align: -5px"/>
+(with <img alt="0\leq \alpha&lt;1" class="math" src="_images/math/e1ffcae591f6540aee6d848823d3db01bba71307.svg" style="vertical-align: -3px"/>) elementwise and  can be applied to Ptensor layers of any order.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">ptensors0</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="go">Ptensor0 [0]:</span>

@@ -164,6 +164,9 @@
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Graphs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gather.html">Gather layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unite.html">Unite layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ggraph.html">Ggraphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subgraph.html">Subgraphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subgraph_layer0.html">Subgraph layers</a></li>
 </ul>
 
 </div>
@@ -195,13 +198,13 @@
 <p>One of the primary applications of permutation equivariant neural nets are graph neural
 networks. The <code class="docutils literal notranslate"><span class="pre">ptens.graph</span></code> class provides the necessary functionality to build graph neural nets
 consisting of Ptensor layers.</p>
-<p>A <code class="docutils literal notranslate"><span class="pre">graph</span></code> object can be initialized directly from its adjacency matrix, represented as an <img alt="n \times n" class="math" src="_images/math/559deeff9ff1b33662716f7cfad33934875f73a5.svg"/>
+<p>A <code class="docutils literal notranslate"><span class="pre">graph</span></code> object can be initialized directly from its adjacency matrix, represented as an <img alt="n \times n" class="math" src="_images/math/559deeff9ff1b33662716f7cfad33934875f73a5.svg" style="vertical-align: -2px"/>
 dense matrix:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Alternatively, it can be initialized from an “edge index”, which is just a <img alt="2\times E" class="math" src="_images/math/51e1e6332cc1032e47c56898434350a6c2e82476.svg"/> integer
+<p>Alternatively, it can be initialized from an “edge index”, which is just a <img alt="2\times E" class="math" src="_images/math/51e1e6332cc1032e47c56898434350a6c2e82476.svg" style="vertical-align: -2px"/> integer
 tensor, listing all the edges:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="o">=</span><span class="n">ptens</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">from_edge_index</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
