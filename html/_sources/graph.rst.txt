@@ -2,163 +2,149 @@
 Graphs
 ******
 
-One of the primary applications of permutation equivariant neural nets are graph neural 
-networks. The ``ptens.graph`` class provides the necessary functionality to build graph neural nets 
-consisting of Ptensor layers.
+One of the primary applications of P-tensors are graph neural 
+networks. The underlying graph must be stored in a ``ptens.ggraph`` object. 
 
-A ``graph`` object can be initialized directly from its adjacency matrix, represented as an :math:`n \times n` 
-dense matrix:
-
-.. code-block:: python
-
- >>> A=torch.tensor([[0,1,0],[1,0,1],[0,1,0]],dtype=torch.float32)
- >>> G=ptens.graph.from_matrix(A)
-
-Alternatively, it can be initialized from an "edge index", which is just a :math:`2\times E` integer 
-tensor, listing all the edges:
+A ``ggraph`` can be constructed directly from its adjacency matrix, represented as a dense :math:`n \times n` 
+integer matrix:
 
 .. code-block:: python
 
- >>> A=torch.tensor([[0,1,1,2],[1,0,2,1]],dtype=torch.float32)
- >>> G=ptens.graph.from_edge_index(A)
+ >> A=torch.tensor([[0,1,0],[1,0,1],[0,1,0]],dtype=torch.int)
+ >> G=ptens.ggraph.from_matrix(A)
 
-Graphs are stored in a custom sparse data structure, allowing `ptens` to potentially handle graphs with a 
-large number of vertices. Graphs are printed out by listing the edges incident 
-on each vertex. Continuing the above example:
+ Ggraph on 3 vertices:
+   [ 0 1 0 ]
+   [ 1 0 1 ]
+   [ 0 1 0 ]
 
-.. code-block:: python
-
- >>> G
- 0<-((1,1))
- 1<-((0,1)(2,1))
- 2<-((1,1))
- 
-The dense representation of the adjacency matrix is recovered using the ``torch()``  method:
+Alternatively, if ``G`` is unweighted, it can be initialized from an "edge index", 
+which is a :math:`2\times E` integer tensor, listing all the edges:
 
 .. code-block:: python
 
- >>> G.torch()
- tensor([[0., 1., 0.],
-         [1., 0., 1.],
-         [0., 1., 0.]])
+ >> A=torch.tensor([[0,1,1,2,0,3],[1,0,2,1,3,0]],dtype=torch.int)
+ >> G=ptens.ggraph.from_edge_index(A)
 
-Random (undirected) graphs can be constructed using the ``random`` constructor, by providing 
+ Ggraph on 4 vertices:
+   [ 0 1 0 1 ]
+   [ 1 0 1 0 ]
+   [ 0 1 0 0 ]
+   [ 1 0 0 0 ]
+
+Random (undirected) graphs can be constructed using the ``random`` constructor, providing 
 the number of vertices and the probability of there being an edge beween any two vertices:
 
 .. code-block:: python
 
- >>> G=ptens.graph.random(8,0.3)
- >>> G.torch()
- tensor([[0., 0., 1., 1., 0., 1., 1., 1.],
+  >> G=ptens.ggraph.random(8,0.3)
+  >> G.torch()
+
+  tensor([[0., 0., 1., 1., 0., 1., 1., 1.],
          [0., 0., 1., 0., 1., 0., 0., 0.],
-         [1., 1., 0., 1., 0., 0., 0., 0.],
-         [1., 0., 1., 0., 0., 0., 0., 0.],
-         [0., 1., 0., 0., 0., 0., 0., 1.],
-         [1., 0., 0., 0., 0., 0., 0., 0.],
-         [1., 0., 0., 0., 0., 0., 0., 1.],
-         [1., 0., 0., 0., 1., 0., 1., 0.]])
+	  [1., 1., 0., 1., 0., 0., 0., 0.],
+	  [1., 0., 1., 0., 0., 0., 0., 0.],
+	  [0., 1., 0., 0., 0., 0., 0., 1.],
+	  [1., 0., 0., 0., 0., 0., 0., 0.],
+	  [1., 0., 0., 0., 0., 0., 0., 1.],
+	  [1., 0., 0., 0., 1., 0., 1., 0.]])
 
-=============
-Neighborhoods
-=============
 
-The ``graph`` class provides some specialized functionality required by equivariant graph neural nets. 
-In certain classes of GNNs, the references domains of the neurons correspond to 
-the k-neighborhoods around each vertex in the graph. 
-The ``nhoods(k)`` function returns these reference domains as an ``atomspack`` object. 
+`Ptens` stores ``ggraph`` s in a custom sparse data structure, making it possible to 
+handle graphs with a large number of vertices. 
+The adjacency matrix can be extracted using the ``adjacency_matrix()``  method:
 
 .. code-block:: python
 
- >>> G=ptens.graph.random(8,0.2)
- >>> G.nhoods(0)
- (0)
- (1)
- (2)
- (3)
- (4)
- (5)
- (6)
- (7)
+ >> G.adjacency_matrix()
 
- >>> G.nhoods(1)
- (0,5)
- (1,4,7)
- (2,5)
- (3)
- (1,4)
- (0,2,5,6)
- (5,6)
- (1,7)
-
- >>> G.nhoods(2)
- (0,2,5,6)
- (1,4,7)
- (0,2,5,6)
- (3)
- (1,4,7)
- (0,2,5,6)
- (0,2,5,6)
- (1,4,7)
+ tensor([[0, 1, 0, 1],
+         [1, 0, 1, 0],
+         [0, 1, 0, 0],
+         [1, 0, 0, 0]])
 
 
-===================
-Edges and subgraphs
-===================
+=============================
+Vertex labels and edge labels
+=============================
 
-The ``edges()`` method returns the list of edges in ``G``:
+In some applications, vertices have (fixed) feature vectors, i.e., labels, attached to them. To create such  
+labeled graphs, we just provide the matrix of labels to the constructor:
 
 .. code-block:: python
 
- >>> G=ptens.graph.random(8,0.3)
- >>> E=G.edges()
- >>> print(E)
- (0,1)
- (1,0)
- (1,2)
- (2,1)
- (2,7)
- (4,5)
- (4,6)
- (4,7) 
- (5,4)
- (6,4)
- (7,2)
- (7,4)
+ >> A=torch.tensor([[0,1,0],[1,0,1],[0,1,0]],dtype=torch.int)
+ >> M=(torch.randn(3,2)*10).int()
+ >> G=ptens.ggraph.from_matrix(A,labels=M)
+ >> print(G)
 
-More generally, if we define a second graph ``H``, the ``subgraphs(H)`` method finds all occurrences of ``H`` 
-in ``G`` as a subgraph and returns the result as an ``atomspack``:
+ Ggraph on 3 vertices:
+   [ 0 1 0 ]
+   [ 1 0 1 ]
+   [ 0 1 0 ]
+ Labels:
+   [ 17 4 ]
+   [ 2 16 ]
+   [ -8 -10 ]
+
+Edge labels can be encoded simply as edge weights:
 
 .. code-block:: python
 
- >>> G=ptens.graph.random(8,0.6)
- >>> triangle=ptens.graph.from_matrix(torch.tensor([[0,1,1],[1,0,1],[1,1,0]],dtype=torch.float32))
- >>> S=G.subgraphs(triangle)
- >>> S
- (0,1,6)
- (0,3,6)
- (0,5,6)
- (1,4,6)
- (4,5,6)
- (4,5,7)
- (4,6,7)
- (5,6,7)
+ >> A=torch.tensor([[0,3,0],[3,0,7],[0,7,0]],dtype=torch.int)
+ >> G=ptens.ggraph.from_matrix(A)
+ >> print(G)
 
-========
-Overlaps
-========
 
-Given two ``atomspack`` objects, the ``overlaps(A,B)`` method creates a bipartite graph in which 
-there is an edge from ``i`` to ``j`` if the ``i`` 'th set in ``A`` has a non-zero intersection with the 
-``j`` 'th set in ``B``. 
+=======
+Caching 
+=======
+
+Graph neural network applications often involve learning from data on a large number of distinct graphs. 
+For each graph, `ptens` needs to compute various objects such as the subgraph lists, layer maps, and so on. 
+To reduce the burden of continually recomputing these objects, `ptens` makes it possible to cache the graphs, 
+as well as most of the derived data structures. 
+
+To add a given graph to `ptens` 's global graph cache, we simply need to assign it an id and call 
+the ``cache`` method:
 
 .. code-block:: python
 
- >>> A=ptens_base.atomspack([[0,1],[2],[4,5]])
- >>> B=ptens_base.atomspack([[1,3],[5,2],[0]])
- >>> G=ptens.graph.overlaps(A,B)
- >>> G.torch()
- tensor([[1., 0., 1.],
-         [0., 1., 0.],
-         [0., 1., 0.]])
+ >> G1=ptens.ggraph.random(6,0.5)
+ >> print(G1)
+ >> G1.cache(3)
 
+ Ggraph on 6 vertices:
+   [ 0 1 0 1 0 1 ]
+   [ 1 0 1 0 0 0 ]
+   [ 0 1 0 0 0 0 ]
+   [ 1 0 0 0 0 0 ]
+   [ 0 0 0 0 0 1 ]
+   [ 1 0 0 0 1 0 ]
+
+The graph can then be retrieved at any later point using the ``from_cache`` constructor:
  
+.. code-block:: python
+
+ >> G2=ptens.from_cache(3)
+ >> print(G2)
+
+ Ggraph on 6 vertices:
+   [ 0 1 0 1 0 1 ]
+   [ 1 0 1 0 0 0 ]
+   [ 0 1 0 0 0 0 ]
+   [ 1 0 0 0 0 0 ]
+   [ 0 0 0 0 0 1 ]
+   [ 1 0 0 0 1 0 ]
+
+The actual graph cache is an object called ``ptens_base.ggraph_cache``. 
+We can check the number of cached graphs with its ``size`` method:
+
+.. code-block:: python
+
+ >> print(ptens_base..ggraph_cache.size())
+
+ 1
+
+
+

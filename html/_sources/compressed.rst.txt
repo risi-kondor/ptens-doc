@@ -1,0 +1,172 @@
+*****************
+Compressed layers
+*****************
+
+A fundamental feature of the P-tensors formalism is that the space required to store a :math:`p` 'th 
+order P-tensor scales with :math:`k^p`, making it challenging to store and operate on higher order 
+P-tensors with larger reference domains. 
+
+
+Compressed P-tensor layers address this problem by expressing each tensor in an :math:`m` dimensional 
+basis (or a tensor product of such a basis with itself for :math:`k>1`) reducing the storage cost to 
+:math:`Cm^k`, where :math:`C` is the number of channels. 
+
+
+=====================
+Compressed Atomspacks
+=====================
+
+Before creating a compressed P-tensor layer, we must define the basis corresponding to each tensor. 
+This information is captured in an compressed atomspack object, abbreviated as ``catomspack``. 
+The easiest way to make a ``catomspack`` is from a regular ``atomspack`` to set the reference 
+domains, combined with a tensor defining the bases.
+
+.. code-block:: python
+
+ >> a=ptens_base.atomspack.from_list([[1,3,4],[2,5]])
+ >> M=torch.randn(a.nrows1(),4)
+ >> A=ptens_base.catomspack(a,M)
+ >> print(A)
+
+ [1,3,4]:
+   [ -0.252236 0.0991601 0.911752 -1.24368 ]
+   [ 0.0725252 0.304462 1.29139 -0.629871 ]
+   [ -0.922413 2.06839 -1.73511 0.922927 ]
+
+ [2,5]:
+   [ 1.87821 1.77665 0.216766 0.785104 ]
+   [ 0.451564 0.440177 -0.59954 0.276317 ]
+
+The bases can be retrieved individually:
+
+.. code-block:: python
+
+ >> print(A.basis(1))
+
+ tensor([[ 1.8782,  1.7767,  0.2168,  0.7851],
+         [ 0.4516,  0.4402, -0.5995,  0.2763]])
+
+
+Or jointly in a single matrix: 
+
+.. code-block:: python
+
+ >> print(A.torch())
+
+ tensor([[-0.2522,  0.0992,  0.9118, -1.2437],
+         [ 0.0725,  0.3045,  1.2914, -0.6299],
+         [-0.9224,  2.0684, -1.7351,  0.9229],
+         [ 1.8782,  1.7767,  0.2168,  0.7851],
+         [ 0.4516,  0.4402, -0.5995,  0.2763]])
+
+Note that the compression bases are always stored column-wise: if a given P-tensor 
+has :math:`k` atoms, and there are :math:`m` basis vectors, then the basis is an :math:`k\times m` 
+matrix. 
+
+======
+Layers 
+======
+
+The ``cptensorlayer1`` and ``cptensorlayer2`` classes are the compressed analogs of 
+``ptensorlayer1`` and ``ptensorlayer2``. There is no ``cptensorlayer0`` class, since 
+zero'th order P-tensors are stored as scalars anyway. 
+Compressed layers can be constructed using the usual ``zeros``, ``randn`` or ``sequential`` 
+constructors: 
+
+.. code-block:: python
+
+ >> a0=ptens_base.atomspack.from_list([[1,3,4],[2,5],[0,2]])
+ >> atoms=ptens_base.catomspack.random(a0,4)
+ >> A=ptens.cptensorlayer1.randn(atoms,3)
+ >> print(A.__repr__(),"\n")
+ >> print(A)
+
+ cptensorlayer1(len=3,nvecs=4,nc=3) 
+
+ Cptensorlayer1:
+   CPtensor1[1,3,4]:
+     [ 1.90257 -0.78864 -1.62771 ]
+     [ 0.61476 0.115359 1.36194 ]
+     [ -0.530983 -0.366732 -0.847887 ]
+     [ 0.556793 0.197012 -1.3538 ]
+   CPtensor1[2,5]:
+     [ 2.21364 0.297983 -0.370528 ]
+     [ -2.52077 0.116051 -0.512892 ]
+     [ 0.0331892 2.44141 -0.590378 ]
+     [ -0.206082 2.43279 -0.791122 ]
+   CPtensor1[0,2]:
+     [ 0.435071 0.589024 -1.27958 ]
+     [ 0.999397 -1.62491 -0.500872 ]
+     [ -2.26596 -0.480967 1.2257 ]
+     [ -0.783692 0.24452 1.5027 ]
+
+or from an :math:`N\times m\times C` dimensional torch tensor:
+
+.. code-block:: python
+
+ >> M=torch.randn([len(atoms),atoms.nvecs(),3])
+ >> A=p.cptensorlayer1.from_tensor(atoms,M)
+
+It is also possible to take an existing P-tensor layer and compress it using the bases supplied in 
+a ``catomspack``:
+
+.. code-block:: python
+
+ >> x=ptens.ptensorlayer1.randn(a0,3)
+ >> catoms=ptens_base.catomspack.random(a0,4)
+ >> X=ptens.cptensorlayer1.compress(catoms,x)
+
+or uncompress a compressed layer into a regular one:
+
+.. code-block:: python
+
+ >> y=X.uncompress()
+
+Linear operations such as addition, subtraction, multiplication by scalars and channel-wise rescaling 
+(as in batch normalization) can be applied to compressed P-tensor layers in the expected way. 
+Pointwise non-linear operations however, such as ``relu`` cannot be aplied, because it would break 
+permutation equivariance. The only way to apply such operations would be to decompressed into a regular 
+P-tensor layer, the operation applied there, and then re-compress. 
+
+=======
+Linmaps
+=======
+
+
+Linmaps can be directly applied to compressed P-tensor layers to give another compressed layer: 
+
+.. code-block:: python
+
+ >> A=ptens.cptensorlayer1.randn(atoms,3)
+ >> B=ptens.cptensorlayer1.linmaps(A1)
+
+The result is the same as what we would get by the following sequence of operations:
+
+.. code-block:: python
+
+ >> A=ptens.cptensorlayer1.randn(atoms,3)
+ >> a=a.uncompress()
+ >> b=ptens.ptensorlayer1.linmaps(a)
+ >> B=ptens.cptensorloayer1.compress(A.atoms,b)
+
+but if some of the P-tensors have large reference domains, computing the linmaps this would  
+be forbiddingly expensive. On the backend, the direct direct method reduces the linmaps operation 
+to multiplication by a block sparse matrix. Just like for regular layers, this matrix is then cached 
+for possible future use. Linmaps between different combinations of compressed layers of different 
+orders work analogously. 
+
+
+===========
+Gather maps
+===========
+
+Similarly to ``linmaps``, compressed layers also fully support ``gather`` operations:
+
+.. code-block:: python
+
+ >> a2=ptens_base.atomspack.random(5,5,0.6)
+ >> catoms2=ptens_base.catomspack.random(a2,4)
+ >> B=ptens.cptensorlayer1.gather(catoms2,A)
+
+Once again, the transformation matrices involved in this operation are automatically cached 
+on the backend. 

@@ -1,0 +1,56 @@
+**************************
+Compressed subgraph layers
+**************************
+
+Compressed layers are particularly useful for higher order GNNs with large subgraphs. 
+The construction of the layers is particularly straightforward because there is a natural choice of 
+compression basis, consisting of the :math:`m` leading (lowest eigenvalue) eigenvectors of the 
+Laplacian of the subgraph. Ptens provides two specialized classes for compressed sugraph layers: 
+``csubgraphlayer1`` and ``csubgraphlayer2``. Their usage is almost exactly the same as of 
+regular subgraph layers, with the exception that their constructors also require specifying the 
+number of basis vectors :math:`m`.
+
+As usual such as objects can be initialized using the ``zeros``, ``randn``, etc., constructors 
+or from a data tensor:
+
+.. code-block:: python
+
+ >> G=ptens.ggraph.random(8,0.5)
+ >> S=ptens.subgraph.triangle()
+ >> A=ptens.csubgraphlayer1.randn(G,S,nvecs,3)
+ >> print(A)
+
+ csubgraphlayer1:
+   CPtensor1[0,5,6]:
+     [ 0.493525 -0.342878 1.44645 ]
+     [ -0.982564 -0.097045 -1.00078 ]
+     [ -0.123699 0.282664 0.444347 ]
+   CPtensor1[4,7,6]:
+     [ -0.191068 -1.37902 0.478407 ]
+     [ 1.22947 -0.338276 1.01485 ]
+     [ 0.754955 -1.30173 -1.71202 ]
+   CPtensor1[4,6,5]:
+     [ -0.34454 0.92664 0.145421 ]
+     [ -0.734754 -0.457473 -0.733602 ]
+     [ 0.722986 -0.308857 0.765271 ]
+
+Note that unlike for the ``cptensorlayer`` classes, the bases and atomspacks do not need to be explicitly 
+specified, since they are computed automatically from the Laplacian of the subgraph ``S``. 
+This makes the syntax much simpler. 
+
+The ``linmaps`` and ``gather`` operations work much the same way between compressed subgraphlayers and other 
+compressed or non-compressed layers of any order as before:
+
+.. code-block:: python
+
+ >> B=ptens.csubgraphlayer1.linmaps(A)
+ >> A2=ptens.csubgraphlayer2.randn(G,S,nvecs,3)
+ >> B2=ptens.csubgraphlayer1.gather(S,A2)
+
+The compressed subgraph layers have their own caching mechanism to facilitate fast computation.
+
+
+
+
+
+
